@@ -1,5 +1,3 @@
-// Upload component — compact horizontal layout, fits in one view
-
 import { useCallback, useRef, useState } from 'react';
 import { Upload, ImageIcon, AlertCircle } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
@@ -42,20 +40,20 @@ export default function UploadStep() {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 24, alignItems: 'stretch' }}>
+    <div style={{ display: 'flex', gap: 32, alignItems: 'stretch', flexDirection: 'row', flexWrap: 'wrap' }}>
       {/* Left: Drop zone */}
       <div
         className={`dropzone${dragOver ? ' drag-over' : ''}`}
         style={{
-          flex: 1,
-          padding: '40px 32px',
+          flex: '2 1 500px',
+          padding: '48px 36px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 14,
+          gap: 20,
           textAlign: 'center',
-          minHeight: 300,
+          minHeight: 340,
         }}
         onClick={() => inputRef.current?.click()}
         onDrop={onDrop}
@@ -69,22 +67,23 @@ export default function UploadStep() {
         onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
       >
         <div style={{
-          width: 64, height: 64,
+          width: 72, height: 72,
           borderRadius: '50%',
           background: 'var(--accent-glow)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          border: '1px solid rgba(108,99,255,0.3)',
+          border: '1.5px solid var(--accent)',
+          transition: 'transform 0.3s ease',
         }}>
           {dragOver
-            ? <ImageIcon size={28} color="var(--accent)" />
-            : <Upload size={28} color="var(--accent)" />
+            ? <ImageIcon size={32} color="var(--accent)" />
+            : <Upload size={32} color="var(--accent)" />
           }
         </div>
         <div>
-          <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+          <div className="apple-h2" style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
             {dragOver ? 'Drop your photo here' : 'Upload Passport Photo'}
           </div>
-          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             Drag & drop or click to browse · JPG, PNG · Max 10MB
           </div>
         </div>
@@ -93,8 +92,9 @@ export default function UploadStep() {
           onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
           id="browse-btn"
           type="button"
+          style={{ fontSize: 16 }}
         >
-          <Upload size={15} />
+          <Upload size={16} />
           Browse Files
         </button>
         <input
@@ -107,32 +107,29 @@ export default function UploadStep() {
         />
 
         {error && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '10px 14px',
-            background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.3)',
-            borderRadius: 8,
+          <div className="warning-box" style={{
+            display: 'flex', alignItems: 'center', gap: 10,
             color: 'var(--danger)',
-            fontSize: 13,
+            fontSize: 15,
             width: '100%',
+            maxWidth: 460,
           }}>
-            <AlertCircle size={15} />
+            <AlertCircle size={18} style={{ flexShrink: 0 }} />
             {error}
           </div>
         )}
       </div>
 
       {/* Right: Info column */}
-      <div style={{ width: 280, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Privacy banner */}
-        <div className="privacy-banner" style={{ padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-          <span style={{ fontSize: 18, lineHeight: 1 }}>🔒</span>
+        <div className="privacy-banner" style={{ padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+          <span style={{ fontSize: 24, lineHeight: 1 }}>🔒</span>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--success)', marginBottom: 2 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
               100% Private Processing
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
               Your photo never leaves your device. Everything is processed locally in your browser.
             </div>
           </div>
@@ -144,11 +141,11 @@ export default function UploadStep() {
           { icon: '😐', title: 'Neutral Expression', desc: 'Face forward, eyes open, mouth closed' },
           { icon: '🎯', title: 'High Resolution', desc: 'Highest quality original for best prints' },
         ].map((tip) => (
-          <div key={tip.title} className="glass-card" style={{ padding: '12px 14px', display: 'flex', gap: 10, alignItems: 'center' }}>
-            <span style={{ fontSize: 20, flexShrink: 0 }}>{tip.icon}</span>
+          <div key={tip.title} className="glass-card" style={{ padding: '16px 18px', display: 'flex', gap: 14, alignItems: 'center' }}>
+            <span style={{ fontSize: 24, flexShrink: 0 }}>{tip.icon}</span>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{tip.title}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{tip.desc}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{tip.title}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4 }}>{tip.desc}</div>
             </div>
           </div>
         ))}

@@ -35,22 +35,27 @@ export default function StepProgress({ currentStep, onStepClick, maxReachableSte
             {/* Step node */}
             <div
               onClick={() => isClickable && onStepClick(step.num)}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: isClickable ? 'pointer' : 'default' }}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: isClickable ? 'pointer' : 'default' }}
               id={`step-${step.num}-indicator`}
             >
               <div
                 className={`step-badge ${isDone ? 'done' : isActive ? 'active' : 'pending'}`}
+                style={{ 
+                  boxShadow: isActive ? 'var(--accent-glow) 0 0 12px' : 'none',
+                  transition: 'background-color 0.3s, color 0.3s, border-color 0.3s'
+                }}
               >
-                {isDone ? <Check size={12} /> : step.num}
+                {isDone ? <Check size={14} /> : step.num}
               </div>
-              <div style={{ textAlign: 'center', minWidth: 64 }}>
+              <div style={{ textAlign: 'center', minWidth: 80 }}>
                 <div style={{
-                  fontSize: 12, fontWeight: 600,
-                  color: isActive ? 'var(--text-primary)' : isDone ? 'var(--success)' : 'var(--text-muted)',
+                  fontSize: 14, fontWeight: 600,
+                  color: isActive ? 'var(--text-primary)' : isDone ? 'var(--success)' : 'var(--text-secondary)',
+                  transition: 'color 0.3s'
                 }}>
                   {step.label}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>{step.sublabel}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{step.sublabel}</div>
               </div>
             </div>
 
@@ -59,7 +64,7 @@ export default function StepProgress({ currentStep, onStepClick, maxReachableSte
               <div style={{
                 flex: 1,
                 height: 2,
-                margin: '-20px 4px 0',
+                margin: '-26px 8px 0',
                 background: isDone
                   ? 'var(--success)'
                   : isActive

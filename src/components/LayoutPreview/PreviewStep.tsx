@@ -25,6 +25,9 @@ export default function PreviewStep() {
     pageDims.width, pageDims.height,
     passDims.width, passDims.height,
     margin, spacing, border,
+    store.gridColsOverride,
+    store.gridRowsOverride,
+    store.alignment,
   );
 
   useEffect(() => {
@@ -61,6 +64,9 @@ export default function PreviewStep() {
         spacingMm: spacing,
         borderMm: border,
         copies,
+        gridColsOverride: store.gridColsOverride,
+        gridRowsOverride: store.gridRowsOverride,
+        alignment: store.alignment,
       });
       setPdfResult(result.blob, result.url, result.layout);
       setStep(5);
@@ -74,38 +80,43 @@ export default function PreviewStep() {
   const photoCount = copies === 0 ? layout.total : Math.min(copies, layout.total);
 
   return (
-    <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
+    <div style={{ display: 'flex', gap: 28, alignItems: 'stretch', flexDirection: 'row', flexWrap: 'wrap' }}>
       {/* Left: Canvas preview */}
       <div
         className="preview-wrapper"
         style={{
-          flex: 1,
+          flex: '2 1 450px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 16,
-          minHeight: 360,
+          padding: 24,
+          minHeight: 400,
           overflow: 'hidden',
           position: 'relative',
         }}
       >
         {/* Zoom controls overlay */}
         <div style={{
-          position: 'absolute', top: 10, right: 10,
-          display: 'flex', gap: 6, zIndex: 2,
+          position: 'absolute', top: 16, right: 16,
+          display: 'flex', gap: 8, zIndex: 2,
+          background: 'rgba(var(--bg-secondary), 0.7)',
+          backdropFilter: 'blur(8px)',
+          padding: '4px',
+          borderRadius: 9999,
+          border: '1px solid var(--border)',
         }}>
-          <button className="btn-secondary" style={{ padding: '5px 8px' }}
+          <button className="btn-secondary" style={{ padding: '6px 10px', borderRadius: 9999, fontSize: 13, height: 32, width: 32, border: 'none' }}
             onClick={() => setPreviewScale(s => Math.max(0.4, s - 0.15))}
             id="zoom-out-preview" type="button" title="Zoom out">
-            <ZoomOut size={13} />
+            <ZoomOut size={14} />
           </button>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', padding: '0 4px' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', padding: '0 8px', fontWeight: 600 }}>
             {Math.round(previewScale * 100)}%
           </span>
-          <button className="btn-secondary" style={{ padding: '5px 8px' }}
+          <button className="btn-secondary" style={{ padding: '6px 10px', borderRadius: 9999, fontSize: 13, height: 32, width: 32, border: 'none' }}
             onClick={() => setPreviewScale(s => Math.min(2, s + 0.15))}
             id="zoom-in-preview" type="button" title="Zoom in">
-            <ZoomIn size={13} />
+            <ZoomIn size={14} />
           </button>
         </div>
 
@@ -113,44 +124,44 @@ export default function PreviewStep() {
           <canvas
             ref={canvasRef}
             id="layout-preview-canvas"
-            style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.5)', borderRadius: 3, display: 'block' }}
+            style={{ boxShadow: 'var(--shadow-product)', borderRadius: 4, display: 'block' }}
           />
         </div>
       </div>
 
       {/* Right: Info + CTA */}
-      <div style={{ width: 240, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Layout stats */}
-        <div className="glass-card" style={{ padding: '14px 16px' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Sheet Summary
+        <div className="glass-card" style={{ padding: '20px 24px' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Sheet Specification
           </div>
           {[
             { label: 'Photo size', val: `${passDims.width}×${passDims.height}mm` },
-            { label: 'Paper', val: `${pageDims.width}×${pageDims.height}mm` },
-            { label: 'Grid', val: `${layout.cols} × ${layout.rows}` },
-            { label: 'Photos', val: String(photoCount) },
-            { label: 'Border', val: border === 0 ? 'None' : `${border}mm` },
-            { label: 'Spacing', val: `${spacing}mm` },
+            { label: 'Paper size', val: `${pageDims.width}×${pageDims.height}mm` },
+            { label: 'Grid dimensions', val: `${layout.cols} × ${layout.rows}` },
+            { label: 'Copies selected', val: `${photoCount} photos` },
+            { label: 'Border thickness', val: border === 0 ? 'None' : `${border}mm` },
+            { label: 'Photo spacing', val: `${spacing}mm` },
           ].map(item => (
-            <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12 }}>
-              <span style={{ color: 'var(--text-muted)' }}>{item.label}</span>
+            <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, fontSize: 14, borderBottom: '1px solid rgba(var(--border), 0.1)', paddingBottom: 6 }}>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{item.label}</span>
               <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{item.val}</span>
             </div>
           ))}
         </div>
 
         {/* Print tip */}
-        <div className="warning-box" style={{ fontSize: 11, lineHeight: 1.6 }}>
-          <div style={{ fontWeight: 700, color: 'var(--warning)', marginBottom: 4 }}>⚠️ Print at 100%</div>
-          <span style={{ color: 'var(--text-secondary)' }}>
-            Disable "Fit to Page". Select "Actual Size" to preserve exact photo dimensions.
+        <div className="warning-box warning-yellow" style={{ fontSize: 13, lineHeight: 1.6 }}>
+          <div style={{ fontWeight: 700, color: 'var(--warning)', marginBottom: 6, fontSize: 14 }}>⚠️ Print at 100% Scale</div>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>
+            Ensure "Fit to Page" is disabled. Select "Actual Size" in your printer settings to guarantee correct physical dimensions.
           </span>
         </div>
 
         {/* Error */}
         {pdfError && (
-          <div style={{ padding: '10px 12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, color: 'var(--danger)', fontSize: 12 }}>
+          <div className="warning-box" style={{ color: 'var(--danger)', fontSize: 14 }}>
             ❌ {pdfError}
           </div>
         )}
@@ -158,10 +169,10 @@ export default function PreviewStep() {
         <div style={{ flex: 1 }} />
 
         {/* Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <button className="btn-secondary" onClick={() => setStep(3)}
-            id="back-settings-btn" type="button" style={{ justifyContent: 'center' }}>
-            <ArrowLeft size={13} /> Back to Settings
+            id="back-settings-btn" type="button" style={{ justifyContent: 'center', width: '100%' }}>
+            <ArrowLeft size={16} /> Back to Settings
           </button>
           <button
             className="btn-success"
@@ -169,16 +180,16 @@ export default function PreviewStep() {
             disabled={isGeneratingPdf || !croppedImageBlob}
             id="generate-pdf-btn"
             type="button"
-            style={{ justifyContent: 'center' }}
+            style={{ justifyContent: 'center', width: '100%' }}
           >
             {isGeneratingPdf ? (
               <>
-                <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
                 Generating...
               </>
             ) : (
               <>
-                <FileDown size={15} />
+                <FileDown size={16} />
                 Generate PDF
               </>
             )}

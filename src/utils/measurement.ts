@@ -65,21 +65,33 @@ export function calculateLayout(
   margin: number,      // mm (all sides)
   spacing: number,     // mm
   border: number,      // mm (each side)
+  gridColsOverride?: number | null,
+  gridRowsOverride?: number | null,
+  alignment?: 'center' | 'left',
 ): LayoutResult {
   const totalPhotoW = photoW + border * 2;
   const totalPhotoH = photoH + border * 2;
   const usableW = pageW - margin * 2;
   const usableH = pageH - margin * 2;
 
-  const cols = Math.max(1, Math.floor((usableW + spacing) / (totalPhotoW + spacing)));
-  const rows = Math.max(1, Math.floor((usableH + spacing) / (totalPhotoH + spacing)));
+  // Max possible columns and rows that can physically fit
+  const maxCols = Math.max(1, Math.floor((usableW + spacing) / (totalPhotoW + spacing)));
+  const maxRows = Math.max(1, Math.floor((usableH + spacing) / (totalPhotoH + spacing)));
+
+  // Use override if specified and fits, otherwise default to maximum possible fit
+  const cols = gridColsOverride && gridColsOverride > 0
+    ? Math.min(gridColsOverride, maxCols)
+    : maxCols;
+  const rows = gridRowsOverride && gridRowsOverride > 0
+    ? Math.min(gridRowsOverride, maxRows)
+    : maxRows;
 
   const totalUsedW = cols * totalPhotoW + (cols - 1) * spacing;
   const totalUsedH = rows * totalPhotoH + (rows - 1) * spacing;
 
-  // Center within usable area
-  const offsetX = margin + (usableW - totalUsedW) / 2;
-  const offsetY = margin + (usableH - totalUsedH) / 2;
+  // Alignment calculations
+  const offsetX = alignment === 'left' ? margin : margin + (usableW - totalUsedW) / 2;
+  const offsetY = alignment === 'left' ? margin : margin + (usableH - totalUsedH) / 2;
 
   return {
     cols,

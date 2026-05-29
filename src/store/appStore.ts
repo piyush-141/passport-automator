@@ -47,10 +47,17 @@ export interface AppState {
   margin: number;          // mm
   spacing: number;         // mm
   border: number;          // mm
+  gridColsOverride: number | null;
+  gridRowsOverride: number | null;
+  alignment: 'center' | 'left';
   setCopies: (n: number) => void;
   setMargin: (n: number) => void;
   setSpacing: (n: number) => void;
   setBorder: (n: number) => void;
+  setGridColsOverride: (n: number | null) => void;
+  setGridRowsOverride: (n: number | null) => void;
+  setAlignment: (a: 'center' | 'left') => void;
+  resetSettings: () => void;
 
   // PDF result
   pdfBlob: Blob | null;
@@ -132,10 +139,32 @@ export const useAppStore = create<AppState>((set, get) => ({
   margin: 5,      // mm
   spacing: 2,     // mm
   border: 0.5,    // mm
+  gridColsOverride: null,
+  gridRowsOverride: null,
+  alignment: 'center',
   setCopies: (n) => set({ copies: n }),
   setMargin: (n) => set({ margin: n }),
   setSpacing: (n) => set({ spacing: n }),
   setBorder: (n) => set({ border: n }),
+  setGridColsOverride: (n) => set({ gridColsOverride: n }),
+  setGridRowsOverride: (n) => set({ gridRowsOverride: n }),
+  setAlignment: (a) => set({ alignment: a }),
+  resetSettings: () => set({
+    copies: 12,
+    margin: 5,
+    spacing: 2,
+    border: 0.5,
+    gridColsOverride: null,
+    gridRowsOverride: null,
+    alignment: 'center',
+    passportSizeId: '28x32',
+    customPassportW: 28,
+    customPassportH: 32,
+    pageSizeId: '4x6',
+    customPageW: 101.6,
+    customPageH: 152.4,
+    cropZoom: 1,
+  }),
 
   // PDF
   pdfBlob: null,

@@ -14,6 +14,9 @@ export interface PDFGenerationOptions {
   borderMm: number;
   copies: number;       // 0 = auto-fit
   borderColor?: { r: number; g: number; b: number };
+  gridColsOverride?: number | null;
+  gridRowsOverride?: number | null;
+  alignment?: 'center' | 'left';
 }
 
 export interface PDFResult {
@@ -35,12 +38,18 @@ export async function generatePassportPDF(opts: PDFGenerationOptions): Promise<P
     marginMm, spacingMm, borderMm,
     copies,
     borderColor = { r: 0, g: 0, b: 0 },
+    gridColsOverride,
+    gridRowsOverride,
+    alignment,
   } = opts;
 
   const layout = calculateLayout(
     pageWidthMm, pageHeightMm,
     photoWidthMm, photoHeightMm,
     marginMm, spacingMm, borderMm,
+    gridColsOverride,
+    gridRowsOverride,
+    alignment,
   );
 
   // Determine how many photos per page, and how many copies

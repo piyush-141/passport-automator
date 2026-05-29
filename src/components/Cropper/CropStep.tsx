@@ -50,14 +50,14 @@ export default function CropStep() {
   if (!rawImageUrl) return null;
 
   return (
-    <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
+    <div style={{ display: 'flex', gap: 28, alignItems: 'stretch', flexDirection: 'row', flexWrap: 'wrap' }}>
       {/* Left: Cropper */}
       <div
         className="cropper-container-wrapper"
-        style={{ flex: 1, minHeight: 380, position: 'relative' }}
+        style={{ flex: '2 1 450px', minHeight: 420, position: 'relative' }}
       >
         <Cropper
-          image={rawImageUrl}
+          image={rawImageUrl || undefined}
           crop={crop}
           zoom={cropZoom}
           rotation={rotation}
@@ -66,20 +66,20 @@ export default function CropStep() {
           onZoomChange={setCropZoom}
           onCropComplete={onCropComplete}
           style={{
-            containerStyle: { borderRadius: 12 },
+            containerStyle: { borderRadius: 18 },
             cropAreaStyle: {
-              border: '2px solid rgba(108,99,255,0.9)',
-              boxShadow: '0 0 0 9999px rgba(0,0,0,0.72)',
+              border: '2.5px solid var(--accent)',
+              boxShadow: '0 0 0 9999px rgba(0,0,0,0.78)',
             },
           }}
         />
       </div>
 
       {/* Right: Controls panel */}
-      <div style={{ width: 260, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Aspect ratio selector */}
-        <div className="glass-card" style={{ padding: '14px 16px' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        <div className="glass-card" style={{ padding: '16px 20px' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Photo Size (Aspect Ratio)
           </div>
           <select
@@ -87,64 +87,65 @@ export default function CropStep() {
             value={passportSizeId}
             onChange={(e) => setPassportSize(e.target.value)}
             id="crop-passport-size-select"
-            style={{ fontSize: 13 }}
+            style={{ fontSize: 15 }}
           >
             {PASSPORT_SIZES.map(s => (
               <option key={s.id} value={s.id}>{s.label}</option>
             ))}
           </select>
-          <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-muted)' }}>
+          <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text-muted)' }}>
             Ratio locked: {dims.width}:{dims.height}
           </div>
         </div>
 
         {/* Zoom */}
-        <div className="glass-card" style={{ padding: '14px 16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Zoom</span>
-            <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700 }}>{cropZoom.toFixed(1)}×</span>
+        <div className="glass-card" style={{ padding: '16px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Zoom</span>
+            <span style={{ fontSize: 14, color: 'var(--accent)', fontWeight: 700 }}>{cropZoom.toFixed(1)}×</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button className="btn-secondary" style={{ padding: '5px 9px' }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button className="btn-secondary" style={{ padding: '8px 12px', borderRadius: 9999, fontSize: 14 }}
               onClick={() => setCropZoom(Math.max(1, cropZoom - 0.1))} id="zoom-out-btn" type="button">
-              <ZoomOut size={13} />
+              <ZoomOut size={15} />
             </button>
             <input type="range" min={1} max={3} step={0.01} value={cropZoom}
               onChange={(e) => setCropZoom(Number(e.target.value))} style={{ flex: 1 }} id="zoom-slider" />
-            <button className="btn-secondary" style={{ padding: '5px 9px' }}
+            <button className="btn-secondary" style={{ padding: '8px 12px', borderRadius: 9999, fontSize: 14 }}
               onClick={() => setCropZoom(Math.min(3, cropZoom + 0.1))} id="zoom-in-btn" type="button">
-              <ZoomIn size={13} />
+              <ZoomIn size={15} />
             </button>
           </div>
         </div>
 
         {/* Rotation */}
-        <div className="glass-card" style={{ padding: '14px 16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rotation</span>
-            <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700 }}>{rotation}°</span>
+        <div className="glass-card" style={{ padding: '16px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Rotation</span>
+            <span style={{ fontSize: 14, color: 'var(--accent)', fontWeight: 700 }}>{rotation}°</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button className="btn-secondary" style={{ padding: '5px 9px' }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button className="btn-secondary" style={{ padding: '8px 12px', borderRadius: 9999, fontSize: 14 }}
               onClick={() => setRotation(r => r - 90)} id="rotate-left-btn" type="button">
-              <RotateCw size={13} style={{ transform: 'scaleX(-1)' }} />
+              <RotateCw size={15} style={{ transform: 'scaleX(-1)' }} />
             </button>
             <input type="range" min={-180} max={180} step={1} value={rotation}
               onChange={(e) => setRotation(Number(e.target.value))} style={{ flex: 1 }} id="rotation-slider" />
-            <button className="btn-secondary" style={{ padding: '5px 9px' }}
+            <button className="btn-secondary" style={{ padding: '8px 12px', borderRadius: 9999, fontSize: 14 }}
               onClick={() => setRotation(r => r + 90)} id="rotate-right-btn" type="button">
-              <RotateCw size={13} />
+              <RotateCw size={15} />
             </button>
           </div>
         </div>
 
         {/* Tip */}
         <div style={{
-          padding: '10px 14px',
+          padding: '12px 16px',
           background: 'var(--bg-secondary)',
-          borderRadius: 8,
-          fontSize: 11,
-          color: 'var(--text-muted)',
+          border: '1px solid var(--border)',
+          borderRadius: 12,
+          fontSize: 13,
+          color: 'var(--text-secondary)',
           lineHeight: 1.5,
         }}>
           💡 Drag the image to reposition. The crop frame stays fixed at the selected ratio.
@@ -154,10 +155,10 @@ export default function CropStep() {
         <div style={{ flex: 1 }} />
 
         {/* Action buttons */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <button className="btn-secondary" onClick={() => setStep(1)}
-            id="back-to-upload" type="button" style={{ justifyContent: 'center' }}>
-            <ArrowLeft size={13} /> Change Photo
+            id="back-to-upload" type="button" style={{ justifyContent: 'center', width: '100%' }}>
+            <ArrowLeft size={16} /> Change Photo
           </button>
           <button
             className="btn-primary"
@@ -165,16 +166,16 @@ export default function CropStep() {
             disabled={isProcessing}
             id="confirm-crop-btn"
             type="button"
-            style={{ justifyContent: 'center' }}
+            style={{ justifyContent: 'center', width: '100%' }}
           >
             {isProcessing ? (
               <>
-                <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
                 Processing...
               </>
             ) : (
               <>
-                <Check size={14} />
+                <Check size={16} />
                 Confirm & Continue
               </>
             )}
