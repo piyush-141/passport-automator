@@ -127,6 +127,19 @@ export default function PDFPreviewStep() {
 
       {/* Stats & privacy reminder */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+        {/* Start over */}
+        <div className="glass-card" style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="apple-h3" style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+            🔄 Start a New Sheet
+          </div>
+          <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            All current images, crops, and layouts will be securely wiped from your browser's memory. Start fresh with another photo.
+          </p>
+          <button className="btn-secondary" onClick={handleStartOver} id="start-over-btn" type="button" style={{ width: '100%', justifyContent: 'center', marginTop: 'auto', height: 44 }}>
+            <RotateCcw size={16} />
+            Start Fresh
+          </button>
+        </div>
         {/* Download again */}
         <div className="glass-card" style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div className="apple-h3" style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -141,19 +154,7 @@ export default function PDFPreviewStep() {
           </button>
         </div>
 
-        {/* Start over */}
-        <div className="glass-card" style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div className="apple-h3" style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
-            🔄 Start a New Sheet
-          </div>
-          <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            All current images, crops, and layouts will be securely wiped from your browser's memory. Start fresh with another photo.
-          </p>
-          <button className="btn-secondary" onClick={handleStartOver} id="start-over-btn" type="button" style={{ width: '100%', justifyContent: 'center', marginTop: 'auto', height: 44 }}>
-            <RotateCcw size={16} />
-            Start Fresh
-          </button>
-        </div>
+
       </div>
     </div>
   );

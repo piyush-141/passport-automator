@@ -1,11 +1,12 @@
 // Crop step — compact 2-column layout: cropper left, controls right
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
-import { ZoomIn, ZoomOut, Check, ArrowLeft, RotateCw } from 'lucide-react';
+import { ZoomIn, ZoomOut, Check, ArrowLeft, RotateCw, Wand2, ExternalLink } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
 import { getCroppedImg } from '../../utils/canvas';
 import { PASSPORT_SIZES } from '../../utils/measurement';
+import { fetchUsageStats, processWhiteBackgroundApi } from '../../services/backendApi';
 
 interface CropAreaResult {
   x: number; y: number; width: number; height: number;
@@ -13,8 +14,8 @@ interface CropAreaResult {
 
 export default function CropStep() {
   const {
-    rawImageUrl, passportSizeId,
-    getPassportDimensions, setCroppedImage, setStep,
+    rawImageUrl, rawImageFile, passportSizeId,
+    getPassportDimensions, setCroppedImage, setRawImage, setStep,
     cropZoom, setCropZoom, setPassportSize,
   } = useAppStore();
 
@@ -22,6 +23,32 @@ export default function CropStep() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropAreaResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [rotation, setRotation] = useState(0);
+
+  const [isProcessingBg, setIsProcessingBg] = useState(false);
+  const [usageLimitReached, setUsageLimitReached] = useState(false);
+  const [bgError, setBgError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchUsageStats()
+      .then(stats => setUsageLimitReached(stats.used >= stats.limit))
+      .catch(err => console.error('Failed to fetch usage stats:', err));
+  }, []);
+
+  const handleWhiteBackground = async () => {
+    if (!rawImageFile) return;
+    setIsProcessingBg(true);
+    setBgError(null);
+    try {
+      const processedBlob = await processWhiteBackgroundApi(rawImageFile);
+      const newFile = new File([processedBlob], rawImageFile.name, { type: 'image/png' });
+      const newUrl = URL.createObjectURL(newFile);
+      setRawImage(newFile, newUrl);
+    } catch (err: any) {
+      setBgError(err.message || 'Processing failed');
+    } finally {
+      setIsProcessingBg(false);
+    }
+  };
 
   const dims = getPassportDimensions();
   const aspect = dims.width / dims.height;
@@ -149,6 +176,51 @@ export default function CropStep() {
           lineHeight: 1.5,
         }}>
           💡 Drag the image to reposition. The crop frame stays fixed at the selected ratio.
+        </div>
+
+        {/* Background Processing */}
+        <div className="glass-card" style={{ padding: '16px 20px' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Background
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <button
+              className="btn-secondary"
+              style={{ flex: 1, padding: '8px 12px', fontSize: 14, justifyContent: 'center' }}
+              onClick={handleWhiteBackground}
+              disabled={isProcessingBg || usageLimitReached}
+              type="button"
+            >
+              {isProcessingBg ? (
+                <>
+                  <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                  Processing...
+                </>
+              ) : usageLimitReached ? (
+                'Limit Reached'
+              ) : (
+                <>
+                  <Wand2 size={15} />
+                  White Background
+                </>
+              )}
+            </button>
+            <a
+              href="https://www.remove.bg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary"
+              style={{ padding: '8px', borderRadius: 8, flexShrink: 0 }}
+              title="Open remove.bg"
+            >
+              <ExternalLink size={16} />
+            </a>
+          </div>
+          {bgError && (
+            <div style={{ marginTop: 8, fontSize: 12, color: '#ef4444', fontWeight: 500 }}>
+              {bgError}
+            </div>
+          )}
         </div>
 
         {/* Spacer */}
