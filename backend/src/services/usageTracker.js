@@ -1,39 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-
-const usageFilePath = path.join(__dirname, '../../storage/usage.json');
 const MAX_LIMIT = 100;
 
+// In-memory usage counter (resets on server restart, safe for ephemeral filesystems like Render)
+let successfulGenerations = 0;
+
 function getUsageData() {
-  try {
-    if (!fs.existsSync(usageFilePath)) {
-      const defaultData = { successfulGenerations: 0 };
-      fs.writeFileSync(usageFilePath, JSON.stringify(defaultData, null, 2));
-      return defaultData;
-    }
-    const data = fs.readFileSync(usageFilePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading usage data:', error);
-    return { successfulGenerations: 0 };
-  }
+  return { successfulGenerations };
 }
 
 function incrementUsage() {
-  try {
-    const data = getUsageData();
-    data.successfulGenerations += 1;
-    fs.writeFileSync(usageFilePath, JSON.stringify(data, null, 2));
-    return data;
-  } catch (error) {
-    console.error('Error incrementing usage:', error);
-    throw new Error('Failed to update usage');
-  }
+  successfulGenerations += 1;
+  return { successfulGenerations };
 }
 
 function getUsageStats() {
-  const data = getUsageData();
-  const used = data.successfulGenerations;
+  const used = successfulGenerations;
   return {
     used,
     limit: MAX_LIMIT,
